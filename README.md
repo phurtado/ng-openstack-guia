@@ -1,8 +1,35 @@
 Angular JS (1.X)
 ================
 
-Angular JS en OpenStack
-=======================
+## Modelos
+En Angular, los modelos son POJOs (Plain Old JavaScript Objects), lo que significa que no se necesita ningún objeto especial, ni heredar ningún prototipo en particular. Cualquier objeto sirve como modelo. La ventaja de esto es la flexibilidad, y la desventaja es que es difícil mantener una representación consistente de los modelos, ya que ni siquiera hace falta definir una estructura para los mismos, y todo el manejo de modelos queda en manos del programador.
+
+Dicho esto, hay un tipo de objeto que es esencial para representar el modelo en la vista y también reflejar en el modelo los cambios en la vista: el Scope.
+
+## Scope
+Uno de los conceptos más importantes de Angular es el scope. TODO
+
+## Views
+En Angular las Views son en realidad meramente lo que en Django llamamos Templates. Lo peculiar de Angular en este aspecto es que lenguaje de templating de Angular es directamente HTML.
+
+## Controllers
+Los controllers sirven para vincular el modelo con la vista, y son los que saben cómo manejar los eventos provenientes de la vista.
+
+Lo que en Django llamamos View, en Angular (y en la mayoría de los frameworks que no sean Django) es un Controller.
+
+En general, como en el caso de Angular el vínculo entre vista y modelo es bidireccional, en la jerga se habla de ViewModel en lugar de Controller, pero Angular como framework conserva el nombre "original".
+
+	angular
+		.module('billingApp')
+		.controller('reportController',['$scope', '$http', '$filter', 'nubeliuSpinnerService', 'billingApp.reportDataService', '$attrs', '$q',
+		function($scope, $http, $filter, spinner, $data, $attrs, $q){
+			...
+		}]);
+## Services, Factories, Providers
+
+## Angular JS en OpenStack
+
+## Directives
 
 ## Módulo principal de Horizon
 ### Kilo
