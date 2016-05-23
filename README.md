@@ -27,7 +27,9 @@ Uno de los conceptos más importantes de Angular es el scope. En parte, es algo 
 #### Sintaxis "controller as"
 A partir de Angular 1.3 ya no es necesario inyectar el servicio *$scope* en los controllers, gracias a la llamada "sintaxis controller as", que consiste en declarar en el html el controller de la siguiente manera:
 
+	```HTML
 	<div ng-controller="StuffController as myCtrl">
+	```
 
 Esto hace que se guarde la referencia al controller con el nombre *myCtrl* y tiene varias ventajas:
 - Toda referencia al scope de este controller en el HTML deberá estar precedida de `myCtrl.` (por ejemplo, si tenemos un miembro llamado *variable*, lo podríamos mostrar usando la expresión `{{myCtrl.variable}}` en lugar de solo `{{variable}}`). Esto es muy útil cuando hay controllers anidados, ya que evitamos conflictos de nombres.
@@ -44,18 +46,22 @@ ngModel es la directive esencial para los formularios en Angular, porque es la q
 
 HTML:
 
+		```HTML
 		<div ng-controller="myController as ctrl">
 			<form>
 				<input type="text" ng-model="ctrl.nombre" name="nombre">
 			</form>
 		</div>
+		```
 
 JS:
 
+		```JavaScript
 		...
 		.controller('myController',function(){
 			this.nombre = "Pablito";
 		});
+		```
 
 En el ejemplo, se vincula el atributo "nombre" del scope con el campo "nombre" del formulario a través de ngModel. Será inicializado con el nombre "Pablito", pero cada vez que se modifique el texto del input, cambiará el valor de la variable "nombre" en el controller.
 
@@ -69,21 +75,25 @@ En general, como en el caso de Angular el vínculo entre vista y modelo es bidir
 Como todos los otros componentes, un Controller es una función. Recibe como parámetros los servicios que le son inyectados. Para inyectar estos servicios hay varias alternativas, pero las recomendables son dos:
 - Pasarle al método `controller` el nombre del controller y un array de N elementos donde los primeros N-1 elementos sean los nombres de los servicios (como strings) a inyectar, más un último elemento que sea la función del controlador, como en este ejemplo:
 
+		```JavaScript
 		angular
 			.module('billingApp')
 			.controller('reportController',['$scope', '$http', '$filter', 'nubeliuSpinnerService', 'billingApp.reportDataService', '$attrs', '$q',
 			function($scope, $http, $filter, spinner, $data, $attrs, $q){
 				...
 			}]);
+		```
 
 - Usar la propiedad $inject de la función del controlador. Por ejemplo:
 
+		```JavaScript
 		var billingModule = angular.module('billingApp');
 		var ReportController = function($scope, $http, $filter, spinner, $data, $attrs, $q) {
 			...
 		};
 		ReportController.$inject = ['$scope', '$http', '$filter', 'nubeliuSpinnerService', 'billingApp.reportDataService', '$attrs', '$q'];
 		billingModule.controller('reportController',ReportController);
+		```
 
 La segunda alternativa es más verbosa, pero parece ser la preferida por los developers del core de Horizon.
 
@@ -94,6 +104,7 @@ El acceso a datos **siempre** debe ser realizado a través de services, sean est
 
 Hay varias maneras de crear un service. La más recomendable, por combinar facilidad con flexibilidad, es utilizar el método `factory`. Esta manera de crear un servicio requiere retornar un objeto que contenga los métodos del service implementado. Por ejemplo:
 
+		```JavaScript
 		angular
 			.module('billingApp')
 			.factory('unServicio',[function(){
@@ -103,7 +114,7 @@ Hay varias maneras de crear un service. La más recomendable, por combinar facil
 					}
 				};
 			}]);
-
+		```
 #### Servicios built-in importantes
 - $scope: Es importante para definir *watches* y aplicar cambios que no surjan de APIs de Angular (por ejemplo, si hacemos algún cambio en el DOM con jQuery) con `$scope.$apply`.
 - $http: Sirve para hacer HTTP Requests asíncronas. Usa Promises.
@@ -160,7 +171,9 @@ En **OpenStack Kilo**, el módulo principal (la *app*) lleva el nombre **hz**. E
 
 En todas las páginas encontramos el tag body de la siguiente manera:
 
+	```HTML
 	<body ng-app="hz" class="ng-scope">
+	```
 
 Dada esta situación, tenemos dos alternativas:
 
@@ -182,11 +195,13 @@ En **billing-ui** está hecho de la siguiente manera:
 
 #### `billing-ui/billing_ui/enabled/showback/_02_billing_reports.py`
 
+	```Python
 	# A list of angular modules to be added as dependencies to horizon app.
 	ADD_ANGULAR_MODULES = ['billingApp']
 
 	# A list of javascript files to be included for all pages
 	ADD_JS_FILES = ['billing_ui/js/app.js']
+	```
 
 ## Tests
 
@@ -194,7 +209,9 @@ En **billing-ui** está hecho de la siguiente manera:
 Los tests unitarios se escriben en archivos con extensión `.spec.js`. Por ejemplo, si tenemos un archivo llamado `servicio.js`, los tests del código de ese archivo deben estar en el mismo directorio, en `servicio.spec.js`.
 
 Los archivos `.spec.js` se pueden manejar automáticamente si tenemos
+	```Python
 	AUTO_DISCOVER_STATIC_FILES = True
+	```
 en el archivo *enabled*.
 
 ### Tests "End To End"
