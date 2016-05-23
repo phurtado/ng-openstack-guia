@@ -37,7 +37,27 @@ Esto hace que se guarde la referencia al controller con el nombre *myCtrl* y tie
 En Angular las Views son en realidad meramente lo que en Django llamamos Templates. Lo peculiar de Angular en este aspecto es que lenguaje de templating de Angular es directamente HTML.
 
 #### Expresiones y one-time bindings
-En cualquier parte de la vista podemos evaluar y mostrar el resultado de una expresión entre dobles llaves (`{{}}`). Es importante tener en cuenta que al hacer esto, por defecto, se va a crear un *watch* para cada expresión. El problema es que con cada binding, el ciclo que hace Angular para buscar y procesar cambios (el llamado *digest cycle*) se vuelve más pesado. Se calcula que Angular soporta hasta 2000 bindings simultaneos, lo cual no es tanto como parece. Para aligerar este problema se agregó en Angular 1.3 la posibilidad de hacer bindings que se procesen sólo la primera vez. La manera de hacer esto es agregando `::` antes de la expresión, después de las primeras dos llaves. Por ejemplo, `{{variable}}` hará un binding normal que se actualizará cada vez que la variable `variable` del scope actual cambie, mientras que `{{::variable}}` tendrá fijo el primer valor que tome dicha variable.
+En cualquier parte de la vista podemos evaluar y mostrar el resultado de una expresión entre dobles llaves (`{{}}`) [**Observación: en Horizon será `{%%}` por compatibilidad con Django**]. Es importante tener en cuenta que al hacer esto, por defecto, se va a crear un *watch* para cada expresión. El problema es que con cada binding, el ciclo que hace Angular para buscar y procesar cambios (el llamado *digest cycle*) se vuelve más pesado. Se calcula que Angular soporta hasta 2000 bindings simultaneos, lo cual no es tanto como parece. Para aligerar este problema se agregó en Angular 1.3 la posibilidad de hacer bindings que se procesen sólo la primera vez. La manera de hacer esto es agregando `::` antes de la expresión, después de las primeras dos llaves. Por ejemplo, `{{variable}}` hará un binding normal que se actualizará cada vez que la variable `variable` del scope actual cambie, mientras que `{{::variable}}` tendrá fijo el primer valor que tome dicha variable.
+
+#### ngModel
+ngModel es la directive esencial para los formularios en Angular, porque es la que establece el binding entre el valor de un input en la vista y el scope. Sin ngModel, las validaciones no funcionan y el scope no mantiene el valor de los campos del formulario.
+
+HTML:
+
+		<div ng-controller="myController as ctrl">
+			<form>
+				<input type="text" ng-model="ctrl.nombre" name="nombre">
+			</form>
+		</div>
+
+JS:
+
+		...
+		.controller('myController',function(){
+			this.nombre = "Pablito";
+		});
+
+En el ejemplo, se vincula el atributo "nombre" del scope con el campo "nombre" del formulario a través de ngModel. Será inicializado con el nombre "Pablito", pero cada vez que se modifique el texto del input, cambiará el valor de la variable "nombre" en el controller.
 
 ### Controllers
 Los controllers sirven para vincular el modelo con la vista, y son los que saben cómo manejar los eventos provenientes de la vista.
@@ -88,16 +108,18 @@ Hay varias maneras de crear un service. La más recomendable, por combinar facil
 - $scope: Es importante para definir *watches* y aplicar cambios que no surjan de APIs de Angular (por ejemplo, si hacemos algún cambio en el DOM con jQuery) con `$scope.$apply`.
 - $http: Sirve para hacer HTTP Requests asíncronas. Usa Promises.
 - $q: Para construir Promises.
+- $attrs: permite acceder a los atributos de un elemento (sirve por ejemplo para pasar argumentos extra a un controller)
 
 ### Directives
 Las directives son, en pocas palabras, las que hacen a Angular interesante y al mismo tiempo uno de sus mayores problemas, por culpa del pobre diseño de la forma de definirlas. **TODO: Es un tema complejo, por ahora lo hablo nada más**
 
-- restrict
+- restrict (E [element], A [attribute], C [class], M [comment])
 - template
 - templateUrl
 - transclude
 - scope
-- require
+- require: para limitar el uso de la directive al caso en el que se encuentre en el scope de un cierto controller
+- replace
 
 #### Directives built-in importantes
 Nota: los nombres dados son los nombres en JavaScript, escritos en camelCase. En HTML cambian los nombres y usan snake-case. Por ejemplo, `ngApp` se vuelve `ng-app`.
