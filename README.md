@@ -92,6 +92,13 @@ Hay varias maneras de crear un service. La más recomendable, por combinar facil
 ### Directives
 Las directives son, en pocas palabras, las que hacen a Angular interesante y al mismo tiempo uno de sus mayores problemas, por culpa del pobre diseño de la forma de definirlas. **TODO: Es un tema complejo, por ahora lo hablo nada más**
 
+- restrict
+- template
+- templateUrl
+- transclude
+- scope
+- require
+
 #### Directives built-in importantes
 Nota: los nombres dados son los nombres en JavaScript, escritos en camelCase. En HTML cambian los nombres y usan snake-case. Por ejemplo, `ngApp` se vuelve `ng-app`.
 - ngApp: define el elemento raíz de la aplicación
@@ -105,8 +112,21 @@ Nota: los nombres dados son los nombres en JavaScript, escritos en camelCase. En
 - ngIf: agrega o elimina del DOM el elemento al cual modifica según el valor de una expresión (en lugar de solo mostrar u ocultar)
 
 ### Filters
+Como los de Django, aplican una función al resultado de una expresión. En Angular, además, los parámetros del filter pueden ser expresiones y actualizarse cuando cambie su resultado. Normalmente son funciones "puras", o sea, reciben un valor y parámetros y retornan un valor, sin efectos secundarios, y para cierta entrada siempre se obtiene la misma salida (*pueden* hacerse filtros "stateful", pero no es recomendable).
+Ejemplo:
+
+		{{objeto_date | date:'yyyy-MM-dd HH:mm'}} //2016-05-23 12:37
+
+#### Filters built-in importantes
+- date: formatea fechas
+- currency: formatea valores de dinero
+- orderBy: para ordenar listas
+- filter: filtra los datos de una lista según una expresión
 
 # Angular JS en OpenStack
+
+## Expresiones
+**IMPORTANTE**: Para permitir la compatibilidad con Django, las expresiones de Angular en Horizon **no van entre `{{}}`**, sino entre **`{%%}`**.
 
 ## Módulo principal de Horizon
 
@@ -126,7 +146,7 @@ Dada esta situación, tenemos dos alternativas:
 Es evidente que la segunda opción es mucho mejor que la primera, ya que evitamos conflictos y mantenemos bien claro dónde está todo el código que pertenece a cada módulo. El problema con la segunda opción es que hay que agregar manualmente nuestros módulos en algún archivo *enabled* para que la app **hz** sepa que tiene que cargarlos, dado que no podemos (o no debemos) agregarle directamente nuestro módulo como dependencia a la app **hz** en su declaración.
 
 ### Liberty y posteriores
-A partir de Liberty, el módulo raíz ha pasado a llamarse **horizon.framework** y también cambiaron completamente la estructura de carpetas. En esta versión, los archivos generales de Angular se ubican en la carpeta `horizon/static/framework`, pero la app de la página se llama **horizon.app** y el módulo principal se encuentra en `openstack_dashboard/static/app/app.module.js`. En `openstack_dashboard/static/app/` hay otros archivos que se usan en el nuevo dashboard. Toda esta nueva estructura implica probablemente una incompatibilidad difícil de resolver.
+A partir de Liberty, el módulo ra9íz ha pasado a llamarse **horizon.framework** y también cambiaron completamente la estructura de carpetas. En esta versión, los archivos generales de Angular se ubican en la carpeta `horizon/static/framework`, pero la app de la página se llama **horizon.app** y el módulo principal se encuentra en `openstack_dashboard/static/app/app.module.js`. En `openstack_dashboard/static/app/` hay otros archivos que se usan en el nuevo dashboard. Toda esta nueva estructura implica probablemente una incompatibilidad difícil de resolver.
 
 En Mitaka parece estar todo bastante bien organizado y la [Guía oficial] explica todo lo necesario en cuanto a la estructura del código JS.
 
@@ -152,6 +172,9 @@ Los tests unitarios se escriben en archivos con extensión `.spec.js`. Por ejemp
 Los archivos `.spec.js` se pueden manejar automáticamente si tenemos
 	AUTO_DISCOVER_STATIC_FILES = True
 en el archivo *enabled*.
+
+### Tests "End To End"
+TODO
 
 ### Correr los tests
 Para correr los tests se puede acceder al test runner desde el browser en `<raíz de horizon>/jasmine/` (por ejemplo: `http://127.0.0.1:8000/jasmine/`). **En nuestro horizon-kilo están faltando algunos archivos core de jasmine, así que los tests no funcionan**.
