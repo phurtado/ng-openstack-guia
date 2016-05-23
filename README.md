@@ -123,6 +123,8 @@ Ejemplo:
 - orderBy: para ordenar listas
 - filter: filtra los datos de una lista según una expresión
 
+----------------
+
 # Angular JS en OpenStack
 
 ## Expresiones
