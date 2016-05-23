@@ -4,6 +4,7 @@ Angular JS (1.X)
 ## Qué es Angular
 - Es un framework para dar estructura a las aplicaciones web, especialmente las SPA (Single Page Applications o aplicaciones de una sola página). Se basa en el patrón MVC (Model - View - Controller) pero con algunas diferencias e introduce terminología propia.
 - Está orientado a aplicaciones donde predominan las operaciones CRUD.
+- "Extiende" HTML para permitir agregar interactividad a las páginas en forma declarativa.
 - Ayuda a modularizar el código de la página (JS y HTML), liberarse de las marañas de callbacks, obtener y enviar datos desde y hacia servicios externos de manera más práctica y prolija, y minimizar la manipulación directa del DOM, evitando, por ejemplo, que se haga extremadamente difícil entender por qué se está disparando ese evento misterioso y dónde está el código del handler que no está haciendo lo que debe.
 - Permite crear componentes reutilizables (que por supuesto sólo se pueden utilizar en aplicaciones de Angular).
 - Facilita el testing del código.
@@ -15,15 +16,13 @@ Angular JS (1.X)
 
 ## Conceptos importantes
 
-### Dependency Injection
-
 ### Modelos
 En Angular, los modelos son POJOs (Plain Old JavaScript Objects), lo que significa que no se necesita ningún objeto especial, ni heredar ningún prototipo en particular. Cualquier objeto sirve como modelo. La ventaja de esto es la flexibilidad, y la desventaja es que es difícil mantener una representación consistente de los modelos, ya que ni siquiera hace falta definir una estructura para los mismos, y todo el manejo de modelos queda en manos del programador.
 
 Dicho esto, hay un tipo de objeto que es esencial para representar el modelo en la vista y también reflejar en el modelo los cambios en la vista: el Scope.
 
 ### Scope
-Uno de los conceptos más importantes de Angular es el scope. Es algo similar al *context* en Django.
+Uno de los conceptos más importantes de Angular es el scope. En parte, es algo similar al *context* en Django. Pero en Angular, los scopes se pueden anidar, y en ellos se pueden registrar *watches*, que escuchan cambios en el modelo y disparan callbacks cuando estos ocurren. También pueden emitir eventos a otros scopes y escuchar los provenientes de los demás. **TODO: ejemplos**
 
 #### Sintaxis "controller as"
 A partir de Angular 1.3 ya no es necesario inyectar el servicio *$scope* en los controllers, gracias a la llamada "sintaxis controller as", que consiste en declarar en el html el controller de la siguiente manera:
@@ -44,15 +43,65 @@ Lo que en Django llamamos View, en Angular (y en la mayoría de los frameworks q
 
 En general, como en el caso de Angular el vínculo entre vista y modelo es bidireccional, en la jerga se habla de ViewModel en lugar de Controller, pero Angular como framework conserva el nombre "original".
 
-	angular
-		.module('billingApp')
-		.controller('reportController',['$scope', '$http', '$filter', 'nubeliuSpinnerService', 'billingApp.reportDataService', '$attrs', '$q',
-		function($scope, $http, $filter, spinner, $data, $attrs, $q){
+Como todos los otros componentes, un Controller es una función. Recibe como parámetros los servicios que le son inyectados. Para inyectar estos servicios hay varias alternativas, pero las recomendables son dos:
+- Pasarle al método `controller` el nombre del controller y un array de N elementos donde los primeros N-1 elementos sean los nombres de los servicios (como strings) a inyectar, más un último elemento que sea la función del controlador, como en este ejemplo:
+
+		angular
+			.module('billingApp')
+			.controller('reportController',['$scope', '$http', '$filter', 'nubeliuSpinnerService', 'billingApp.reportDataService', '$attrs', '$q',
+			function($scope, $http, $filter, spinner, $data, $attrs, $q){
+				...
+			}]);
+
+- Usar la propiedad $inject de la función del controlador. Por ejemplo:
+
+		var billingModule = angular.module('billingApp');
+		var ReportController = function($scope, $http, $filter, spinner, $data, $attrs, $q) {
 			...
-		}]);
-### Services, Factories, Providers
+		};
+		ReportController.$inject = ['$scope', '$http', '$filter', 'nubeliuSpinnerService', 'billingApp.reportDataService', '$attrs', '$q'];
+		billingModule.controller('reportController',ReportController);
+
+La segunda alternativa es más verbosa, pero parece ser la preferida por los developers del core de Horizon.
+
+### Services
+Los servicios en Angular son objetos Singleton que pueden ser usados en otros componentes (controllers, directives, filters, otros services) pasándoles una referencia mediante el mecanismo de Dependency Injection.
+
+El acceso a datos **siempre** debe ser realizado a través de services, sean estos los provistos por Angular que veremos en la próxima sección, o services propios.
+
+Hay varias maneras de crear un service. La más recomendable, por combinar facilidad con flexibilidad, es utilizar el método `factory`. Esta manera de crear un servicio requiere retornar un objeto que contenga los métodos del service implementado. Por ejemplo:
+
+		angular
+			.module('billingApp')
+			.factory('unServicio',[function(){
+				return {
+					hola: function(nombre){
+							return 'hola' + nombre;
+					}
+				};
+			}]);
+
+#### Servicios built-in importantes
+- $scope: Es importante para definir *watches* y aplicar cambios que no surjan de APIs de Angular (por ejemplo, si hacemos algún cambio en el DOM con jQuery) con `$scope.$apply`.
+- $http: Sirve para hacer HTTP Requests asíncronas. Usa Promises.
+- $q: Para construir Promises.
 
 ### Directives
+Las directives son, en pocas palabras, las que hacen a Angular interesante y al mismo tiempo uno de sus mayores problemas, por culpa del pobre diseño de la forma de definirlas.
+
+#### Directives built-in importantes
+Nota: los nombres dados son los nombres en JavaScript, escritos en camelCase. En HTML cambian los nombres y usan snake-case. Por ejemplo, `ngApp` se vuelve `ng-app`.
+- ngApp: define el elemento raíz de la aplicación
+- ngController: vincula la vista con un controlador
+- ngRepeat: itera sobre una lista
+- ngSrc: sirve para asignar dinámicamente el atributo src de una imagen
+- ngClass: asigna clases de CSS según atributos del scope
+- ngModel: establece two-way bindings entre inputs y el scope
+- ngChange: dispara una expresión cuando el input cambia
+- ngShow y ngHide: muestran u ocultan dinámicamente el elemento al cual modifican según el valor de una expresión
+- ngIf: agrega o elimina del DOM el elemento al cual modifica según el valor de una expresión (en lugar de solo mostrar u ocultar)
+
+### Bindings (ngModel)
 
 ### Filters
 
