@@ -203,6 +203,35 @@ ADD_ANGULAR_MODULES = ['billingApp']
 ADD_JS_FILES = ['billing_ui/js/app.js']
 ```
 
+## UI Bootstrap
+Horizon incluye un módulo llamado Angular UI Bootstrap [Página de Angular UI Bootstrap], que provee directives de Angular para la UI, como por ejemplo el datepicker.
+Un par de observaciones con respecto a esto:
+
+- En la página de UI Bootstrap, las directives llevan el prefijo `uib-`. En Horizon dicho prefijo se omite.
+- Los templates originales usan Glyphicons Halflings en lugar de Font Awesome. Para reemplazar los íconos se puede usar algo así (esto fue agregado en Common UI en `common-ui/static/common_ui/css/global.css`):
+
+```css
+.glyphicon {
+	font-family: 'FontAwesome' !important;
+}
+
+.glyphicon-chevron-left:before {
+	content: "\f053" !important;
+}
+
+.glyphicon-chevron-right:before {
+	content: "\f054" !important;
+}
+```
+
+- Hacer andar el datepicker tiene sus trucos. Con el ng-click como aparece en la página, el popup no abre. Hace falta usar preventDefault y stopPropagation como si estuviéramos en un modal, de la siguiente manera:
+```html
+<button type="button" class="btn btn-default" ng-click="$event.preventDefault();$event.stopPropagation();sfctrl.openDatePopup()">
+	<i class="fa fa-calendar"></i>
+</button>
+```
+(Reemplazar `ctrl` por el alias del controller; `sfctrl.openDatePopup()` es la función que pone `opened` en `true`, ver documentación oficial)
+
 ## Tests
 
 ### Unit tests
@@ -227,3 +256,5 @@ Links
 [Guía Oficial de Angular en OpenStack][Guía oficial] (Aplica a versiones recientes solamente)
 
 [Guía oficial]:http://docs.openstack.org/developer/horizon/topics/angularjs.html
+
+[Página de Angular UI Bootstrap]:https://angular-ui.github.io/bootstrap
