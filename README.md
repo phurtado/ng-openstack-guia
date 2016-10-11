@@ -39,7 +39,7 @@ Esto hace que se guarde la referencia al controller con el nombre *myCtrl* y tie
 En Angular las Views son en realidad meramente lo que en Django llamamos Templates. Lo peculiar de Angular en este aspecto es que lenguaje de templating de Angular es directamente HTML.
 
 #### Expresiones y one-time bindings
-En cualquier parte de la vista podemos evaluar y mostrar el resultado de una expresión entre dobles llaves (`{{}}`) [**Observación: en Horizon será `{%%}` por compatibilidad con Django**]. Es importante tener en cuenta que al hacer esto, por defecto, se va a crear un *watch* para cada expresión. El problema es que con cada binding, el ciclo que hace Angular para buscar y procesar cambios (el llamado *digest cycle*) se vuelve más pesado. Se calcula que Angular soporta hasta 2000 bindings simultaneos, lo cual no es tanto como parece. Para aligerar este problema se agregó en Angular 1.3 la posibilidad de hacer bindings que se procesen sólo la primera vez. La manera de hacer esto es agregando `::` antes de la expresión, después de las primeras dos llaves. Por ejemplo, `{{variable}}` hará un binding normal que se actualizará cada vez que la variable `variable` del scope actual cambie, mientras que `{{::variable}}` tendrá fijo el primer valor que tome dicha variable.
+En cualquier parte de la vista podemos evaluar y mostrar el resultado de una expresión entre dobles llaves (`{{}}`) [**Observación: en Horizon será `{$$}` por compatibilidad con Django**]. Es importante tener en cuenta que al hacer esto, por defecto, se va a crear un *watch* para cada expresión. El problema es que con cada binding, el ciclo que hace Angular para buscar y procesar cambios (el llamado *digest cycle*) se vuelve más pesado. Se calcula que Angular soporta hasta 2000 bindings simultaneos, lo cual no es tanto como parece. Para aligerar este problema se agregó en Angular 1.3 la posibilidad de hacer bindings que se procesen sólo la primera vez. La manera de hacer esto es agregando `::` antes de la expresión, después de las primeras dos llaves. Por ejemplo, `{{variable}}` hará un binding normal que se actualizará cada vez que la variable `variable` del scope actual cambie, mientras que `{{::variable}}` tendrá fijo el primer valor que tome dicha variable.
 
 #### ngModel
 ngModel es la directive esencial para los formularios en Angular, porque es la que establece el binding entre el valor de un input en la vista y el scope. Sin ngModel, las validaciones no funcionan y el scope no mantiene el valor de los campos del formulario.
@@ -161,7 +161,7 @@ Ejemplo:
 # Angular JS en OpenStack
 
 ## Expresiones
-**IMPORTANTE**: Para permitir la compatibilidad con Django, las expresiones de Angular en Horizon **no van entre `{{}}`**, sino entre **`{%%}`**.
+**IMPORTANTE**: Para permitir la compatibilidad con Django, las expresiones de Angular en Horizon **no van entre `{{}}`**, sino entre **`{$$}`**.
 
 ## Módulo principal de Horizon
 
